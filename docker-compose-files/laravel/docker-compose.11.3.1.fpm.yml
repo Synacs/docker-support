@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres: #PostgreSQL
+    image: postgres:16.2-alpine
+    restart: always
+    volumes:
+        - postgres-data:/var/lib/postgresql/data
+    networks:
+      - main-network
+
+  redis: #Redis
+    image: redis:7.2-alpine
+    restart: always
+    volumes: 
+      - redis-data:/data
+    networks:
+      - main-network
+
+  php-fpm: #Application
+    image: ${SYNACS_REGISTRY_IMAGE}
+    networks:
+      - main-network
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      # Postgres
+      - DB_CONNECTION=pgsql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=postgres
+      - DB_USERNAME=postgres
+      # Redis
+      - REDIS_HOST=redis
+
+  nginx:
+    image: synacs/laravel-nginx.1.25-alpine
+    ports:
+      - "8001:80"
+    networks:
+      - main-network
+    depends_on:
+      - php-fpm
+
+
+volumes:
+  postgres-data:
+  redis-data:
+
+networks:
+  main-network:
+    driver: bridge
