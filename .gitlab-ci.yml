@@ -1,0 +1,7 @@
+stages:
+  - add-to-github
+
+Add to github:
+  stage: add-to-github
+  script:
+    - git push https://${GITHUB_REPO_TOKEN}@github.com/synacs/docker-support.git
