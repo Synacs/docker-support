@@ -3,7 +3,7 @@ version: '3.8'
 services:
   postgres:
     extends:
-      file: templates/postgres.yml
+      file: templates/postgres/postgres.16.2-alpine.yml
       service: postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
@@ -48,6 +48,7 @@ services:
       service: nginx
     volumes:
       - ./templates/nginx/templates:/etc/nginx/templates
+      - ./src:/application
     ports:
       - "8001:80"
     networks:
